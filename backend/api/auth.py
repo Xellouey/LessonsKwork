@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 from shared.database import get_db
 from shared.models import AdminUser
 from shared.schemas import Token, LoginRequest, ChangePasswordRequest, AdminUser as AdminUserSchema
-from shared.utils import verify_password, get_password_hash
+from shared import helper_functions as utils
 from backend.api.deps import (
     create_access_token, get_current_admin_user, get_current_active_admin
 )
@@ -39,7 +39,7 @@ def login_for_access_token(
     user = db.query(AdminUser).filter(AdminUser.username == login_data.username).first()
     
     # Проверка существования пользователя и пароля
-    if not user or not verify_password(login_data.password, user.hashed_password):
+    if not user or not utils.verify_password(login_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -77,7 +77,7 @@ def login_oauth(
     """
     user = db.query(AdminUser).filter(AdminUser.username == form_data.username).first()
     
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not utils.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -168,21 +168,21 @@ def change_password(
     - **new_password**: Новый пароль (минимум 6 символов)
     """
     # Проверка текущего пароля
-    if not verify_password(password_data.current_password, current_user.hashed_password):
+    if not utils.verify_password(password_data.current_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Current password is incorrect"
         )
     
     # Проверка, что новый пароль отличается от текущего
-    if verify_password(password_data.new_password, current_user.hashed_password):
+    if utils.verify_password(password_data.new_password, current_user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="New password must be different from current password"
         )
     
     # Обновление пароля
-    current_user.hashed_password = get_password_hash(password_data.new_password)
+    current_user.hashed_password = utils.get_password_hash(password_data.new_password)
     
     try:
         db.commit()

@@ -28,6 +28,7 @@ class User(Base):
     last_name: Mapped[Optional[str]] = Column(String(255), nullable=True)
     language_code: Mapped[str] = Column(String(10), default="en", nullable=False)
     is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
+    is_admin: Mapped[bool] = Column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = Column(DateTime, default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = Column(
         DateTime, default=func.now(), onupdate=func.now(), nullable=False
@@ -226,6 +227,40 @@ class SupportTicket(Base):
         return f"<SupportTicket(id={self.id}, user_id={self.user_id}, subject='{self.subject}', status='{self.status}')>"
 
 
+class WithdrawRequest(Base):
+    """Модель запроса на вывод средств."""
+    
+    __tablename__ = "withdraw_requests"
+
+    id: Mapped[int] = Column(Integer, primary_key=True, index=True)
+    amount: Mapped[int] = Column(Integer, nullable=False, comment="Сумма для вывода в Telegram Stars")
+    status: Mapped[str] = Column(
+        String(50), 
+        nullable=False, 
+        default="pending",
+        comment="pending, approved, completed, rejected"
+    )
+    telegram_wallet_address: Mapped[Optional[str]] = Column(
+        String(255), nullable=True, comment="Адрес Telegram кошелька"
+    )
+    requested_at: Mapped[datetime] = Column(DateTime, default=func.now(), nullable=False)
+    processed_at: Mapped[Optional[datetime]] = Column(DateTime, nullable=True)
+    notes: Mapped[Optional[str]] = Column(Text, nullable=True, comment="Заметки администратора")
+    admin_id: Mapped[Optional[int]] = Column(
+        Integer, ForeignKey("admin_users.id"), nullable=True, comment="ID администратора, обработавшего запрос"
+    )
+    created_at: Mapped[datetime] = Column(DateTime, default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = Column(
+        DateTime, default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+    # Relationships
+    admin: Mapped[Optional["AdminUser"]] = relationship("AdminUser", foreign_keys=[admin_id])
+
+    def __repr__(self) -> str:
+        return f"<WithdrawRequest(id={self.id}, amount={self.amount}, status='{self.status}')>"
+
+
 class AdminUser(Base):
     """Модель администратора."""
     
@@ -242,5 +277,35 @@ class AdminUser(Base):
         DateTime, default=func.now(), onupdate=func.now(), nullable=False
     )
 
+    # Relationships
+    processed_withdraws: Mapped[List["WithdrawRequest"]] = relationship(
+        "WithdrawRequest", back_populates="admin", foreign_keys="WithdrawRequest.admin_id"
+    )
+
     def __repr__(self) -> str:
         return f"<AdminUser(id={self.id}, username='{self.username}', email='{self.email}')>"
+
+
+class BotSettings(Base):
+    """Модель для настроек текстов и кнопок бота."""
+    
+    __tablename__ = "bot_settings"
+
+    id: Mapped[int] = Column(Integer, primary_key=True, index=True)
+    key: Mapped[str] = Column(String(100), unique=True, index=True, nullable=False)
+    value: Mapped[str] = Column(Text, nullable=False)
+    description: Mapped[Optional[str]] = Column(String(255), nullable=True)
+    category: Mapped[str] = Column(
+        String(50), 
+        nullable=False, 
+        default="general",
+        comment="general, buttons, messages, notifications"
+    )
+    is_active: Mapped[bool] = Column(Boolean, default=True, nullable=False)
+    created_at: Mapped[datetime] = Column(DateTime, default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = Column(
+        DateTime, default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+    def __repr__(self) -> str:
+        return f"<BotSettings(id={self.id}, key='{self.key}', category='{self.category}')>"

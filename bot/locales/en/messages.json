@@ -1,0 +1,119 @@
+{
+  "welcome": "🎓 Welcome to Lessons Bot!\n\nHere you can purchase and access educational video lessons.\n\nChoose an action:",
+  
+  "main_menu": {
+    "browse_lessons": "📚 Browse Lessons",
+    "my_lessons": "👤 My Lessons", 
+    "support": "🆘 Support",
+    "language": "🌐 Language",
+    "settings": "⚙️ Settings"
+  },
+  
+  "lessons": {
+    "catalog_title": "📚 Lessons Catalog",
+    "no_lessons": "📭 No lessons available at the moment.",
+    "lesson_details": "📖 Lesson Details",
+    "price": "💰 Price: {price}",
+    "duration": "⏱️ Duration: {duration}",
+    "free_lesson": "🎁 Free Lesson",
+    "buy_button": "💳 Buy for {price}",
+    "view_lesson": "👁️ View Lesson",
+    "already_purchased": "✅ Already Purchased",
+    "loading": "⏳ Loading lessons...",
+    "search_placeholder": "🔍 Search lessons...",
+    "page_info": "Page {current} of {total}",
+    "prev_page": "◀️ Previous",
+    "next_page": "Next ▶️"
+  },
+  
+  "my_lessons": {
+    "title": "👤 My Lessons", 
+    "empty": "📭 You haven't purchased any lessons yet.\n\nBrowse our catalog to find interesting content!",
+    "lesson_item": "📖 {title}",
+    "purchased_on": "📅 Purchased: {date}",
+    "access_lesson": "▶️ Open Lesson"
+  },
+  
+  "payments": {
+    "select_payment": "💳 Select Payment Method",
+    "telegram_stars": "⭐ Pay with Telegram Stars",
+    "processing": "⏳ Processing payment...",
+    "creating_invoice": "⏳ Creating invoice...",
+    "success": "✅ Payment successful!\n\nLesson has been added to 'My Lessons'. You can now access it anytime.",
+    "failed": "❌ Payment failed. Please try again.",
+    "cancelled": "❌ Payment was cancelled.",
+    "promo_code_prompt": "🎫 Enter promo code (optional):",
+    "promo_code_applied": "🎉 Promo code applied!\nDiscount: {discount}%\nNew price: {price}",
+    "promo_code_invalid": "❌ Invalid or expired promo code.",
+    "skip_promo": "⏭️ Skip promo code",
+    "confirm_purchase": "💰 Confirm Purchase",
+    "purchase_details": "💰 Purchase Details:\n\n📖 Lesson: {title}\n💰 Price: {price}\n🎫 Promo: {promo}\n\nProceed with payment?",
+    "confirm_button": "✅ Confirm Payment",
+    "cancel_button": "❌ Cancel"
+  },
+  
+  "support": {
+    "title": "🆘 Support Center",
+    "contact": "📞 Contact Support",
+    "faq": "❓ Frequently Asked Questions", 
+    "send_message": "💬 Send Message",
+    "message_prompt": "💬 Please describe your issue or question:",
+    "message_sent": "✅ Your message has been sent to our support team.\n\nWe will get back to you as soon as possible.",
+    "admin_contact": "👨‍💻 Contact Admin",
+    "back": "🔙 Back"
+  },
+  
+  "language": {
+    "title": "🌐 Select Language",
+    "current": "Current language: {language}",
+    "select": "Choose your preferred language:",
+    "changed": "✅ Language changed to {language}",
+    "change_failed": "❌ Failed to change language. Please try again."
+  },
+  
+  "navigation": {
+    "back": "🔙 Back",
+    "main_menu": "🏠 Main Menu",
+    "cancel": "❌ Cancel",
+    "continue": "➡️ Continue",
+    "refresh": "🔄 Refresh",
+    "settings": "⚙️ Settings"
+  },
+  
+  "errors": {
+    "general": "❌ An error occurred. Please try again.",
+    "network": "🌐 Network error. Please check your connection.",
+    "api_error": "🔧 Service temporarily unavailable. Please try again later.",
+    "lesson_not_found": "❌ Lesson not found.",
+    "access_denied": "🚫 Access denied. Please purchase this lesson first.",
+    "payment_error": "💳 Payment error. Please try again.",
+    "invalid_input": "❌ Invalid input. Please try again.",
+    "timeout": "⏱️ Operation timed out. Please try again."
+  },
+  
+  "success": {
+    "operation_completed": "✅ Operation completed successfully!",
+    "settings_saved": "✅ Settings saved!",
+    "message_sent": "✅ Message sent!"
+  },
+  
+  "common": {
+    "yes": "✅ Yes",
+    "no": "❌ No", 
+    "ok": "👌 OK",
+    "loading": "⏳ Loading...",
+    "please_wait": "⏳ Please wait...",
+    "free": "🆓 Free",
+    "premium": "💎 Premium",
+    "new": "🆕 New",
+    "popular": "🔥 Popular"
+  },
+  
+  "admin": {
+    "panel": "👨‍💻 Admin Panel",
+    "stats": "📊 Statistics",
+    "users": "👥 Users",
+    "lessons": "📚 Lessons",
+    "broadcast": "📢 Broadcast"
+  }
+}

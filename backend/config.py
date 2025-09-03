@@ -63,6 +63,19 @@ class Settings(BaseSettings):
     app_version: str = "1.0.0"
     app_description: str = "API для Telegram бота по продаже видеоуроков"
     
+    # Communication system
+    redis_url: str = "redis://localhost:6379/0"
+    celery_broker_url: str = "redis://localhost:6379/0"
+    celery_result_backend: str = "redis://localhost:6379/0"
+    smtp_host: str = "smtp.gmail.com"
+    smtp_port: int = 587
+    smtp_username: str = "your-email@gmail.com"
+    smtp_password: str = "your-app-password"
+    notification_channels: str = "telegram,email"
+    broadcast_rate_limit: int = 30
+    support_auto_reply: bool = True
+    default_support_message: str = "Спасибо за обращение! Мы ответим в течение 24 часов."
+    
     @validator("allowed_origins", pre=True)
     def parse_cors_origins(cls, v):
         """Парсинг CORS origins из строки или списка."""

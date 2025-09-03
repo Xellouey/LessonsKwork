@@ -15,7 +15,16 @@ from sqlalchemy import text
 from .models import Base
 
 # Получение URL базы данных из переменных окружения
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./lessons.db")
+def get_database_url():
+    """Get database URL from config or environment."""
+    try:
+        from ..config import settings
+        return settings.database_url
+    except ImportError:
+        # Fallback to environment variable if config is not available
+        return os.getenv("DATABASE_URL", "sqlite:///./lessons.db")
+
+DATABASE_URL = get_database_url()
 
 # Создание движка базы данных
 if DATABASE_URL.startswith("sqlite"):
@@ -90,7 +99,7 @@ def init_database():
     Инициализация базы данных.
     Создает таблицы и добавляет начальные данные если необходимо.
     """
-    from .utils import create_admin_user
+    from .helper_functions import create_admin_user
     
     # Создание таблиц
     create_tables()

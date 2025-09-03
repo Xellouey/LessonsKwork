@@ -20,6 +20,25 @@ class SupportTicketStatus(str, Enum):
     CLOSED = "closed"
 
 
+class WithdrawStatus(str, Enum):
+    """Статусы запросов на вывод."""
+    PENDING = "pending"
+    APPROVED = "approved"
+    COMPLETED = "completed"
+    REJECTED = "rejected"
+
+
+class PaymentStatus(str, Enum):
+    """Статусы платежей."""
+    CREATED = "created"
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+    REFUNDED = "refunded"
+
+
 class LanguageCode(str, Enum):
     """Поддерживаемые языки."""
     ENGLISH = "en"
@@ -55,6 +74,13 @@ REFRESH_TOKEN_EXPIRE_DAYS = 7
 # Промокоды
 MAX_PROMO_USES = 1000
 MAX_DISCOUNT_PERCENT = 100
+
+# Платежи и вывод средств
+MIN_WITHDRAW_AMOUNT = 100  # Минимальная сумма для вывода
+MAX_WITHDRAW_AMOUNT = 50000  # Максимальная сумма для вывода
+COMMISSION_PERCENT = 5  # Комиссия платформы в процентах
+PAYMENT_TIMEOUT_MINUTES = 30  # Таймаут для платежа
+TELEGRAM_STARS_CURRENCY = "XTR"  # Валюта Telegram Stars
 
 # Файловые пути
 STORAGE_PATH = "storage"

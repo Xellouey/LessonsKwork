@@ -270,6 +270,121 @@ class SupportTicketWithUser(SupportTicket):
     user: Optional[User] = None
 
 
+# ========== Withdraw Request Schemas ==========
+
+class WithdrawRequestBase(BaseSchema):
+    """Базовая схема запроса на вывод."""
+    amount: int = Field(..., ge=1, description="Сумма для вывода в Telegram Stars")
+    telegram_wallet_address: Optional[str] = Field(None, max_length=255, description="Адрес Telegram кошелька")
+
+
+class WithdrawRequestCreate(WithdrawRequestBase):
+    """Схема для создания запроса на вывод."""
+    pass
+
+
+class WithdrawRequestUpdate(BaseSchema):
+    """Схема для обновления запроса."""
+    status: Optional[str] = Field(None, pattern="^(pending|approved|completed|rejected)$")
+    notes: Optional[str] = Field(None, max_length=5000)
+    telegram_wallet_address: Optional[str] = Field(None, max_length=255)
+
+
+class WithdrawRequest(WithdrawRequestBase):
+    """Схема запроса на вывод для ответа."""
+    id: int
+    status: str
+    requested_at: datetime
+    processed_at: Optional[datetime]
+    notes: Optional[str]
+    admin_id: Optional[int]
+    created_at: datetime
+    updated_at: datetime
+
+
+class WithdrawRequestWithAdmin(WithdrawRequest):
+    """Схема запроса с информацией об администраторе."""
+    admin: Optional["AdminUser"] = None
+
+
+# ========== Payment Schemas ==========
+
+class PaymentCreateRequest(BaseSchema):
+    """Схема для создания платежа."""
+    user_id: int = Field(..., description="ID пользователя")
+    item_id: int = Field(..., description="ID товара (урок или курс)")
+    item_type: str = Field(..., pattern="^(lesson|course)$", description="Тип товара")
+    promo_code: Optional[str] = Field(None, max_length=50, description="Промокод")
+
+
+class PaymentResponse(BaseSchema):
+    """Ответ на создание платежа."""
+    payment_id: str
+    amount: int
+    final_amount: int
+    discount_applied: Optional[int] = None
+    invoice_payload: str
+    
+
+class PaymentVerificationRequest(BaseSchema):
+    """Запрос на верификацию платежа."""
+    payment_id: str
+    telegram_payment_charge_id: str
+    provider_payment_charge_id: str
+
+
+class WebhookPaymentData(BaseSchema):
+    """Данные платежа из webhook."""
+    payment_id: str
+    amount: int
+    currency: str
+    telegram_payment_charge_id: str
+    provider_payment_charge_id: str
+    invoice_payload: str
+
+
+# ========== Finance Schemas ==========
+
+class DailyRevenueStats(BaseSchema):
+    """Статистика доходов за день."""
+    date: str
+    total_revenue: int
+    total_purchases: int
+    completed_purchases: int
+    failed_purchases: int
+    average_purchase: float
+    top_lessons: List[dict]
+
+
+class MonthlyStats(BaseSchema):
+    """Месячная статистика."""
+    year: int
+    month: int
+    total_revenue: int
+    total_purchases: int
+    daily_breakdown: List[DailyRevenueStats]
+    growth_rate: float
+
+
+class TopSellingItem(BaseSchema):
+    """Топ продаж."""
+    item_id: int
+    item_type: str
+    title: str
+    sales_count: int
+    total_revenue: int
+    price: int
+
+
+class WithdrawableAmount(BaseSchema):
+    """Доступная сумма для вывода."""
+    total_revenue: int
+    total_withdraws: int
+    pending_withdraws: int
+    available_amount: int
+    commission_amount: int
+
+
 # ========== Admin User Schemas ==========
 
 class AdminUserBase(BaseSchema):

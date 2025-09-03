@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 
 from .models import AdminUser, User, Lesson, Course
+from typing import List
 
 # Контекст для хеширования паролей
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -169,7 +170,7 @@ def calculate_discount_price(original_price: int, discount_percent: int, discoun
 def is_email_valid(email: str) -> bool:
     """Простая проверка валидности email."""
     import re
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'$'
     return re.match(pattern, email) is not None
 
 
@@ -229,3 +230,131 @@ def format_file_size(size_bytes: int) -> str:
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return f"{s} {size_names[i]}"
+
+def cre
+ate_telegram_admin(db: Session, telegram_id: int, username: str = None, first_name: str = "Admin") -> Optional[User]:
+    """
+    Создание администратора из Telegram ID.
+    
+    Args:
+        db: Сессия базы данных
+        telegram_id: Telegram ID пользователя
+        username: Username пользователя (опционально)
+        first_name: Имя пользователя
+    
+    Returns:
+        User объект или None при ошибке
+    """
+    try:
+        # Проверяем, существует ли уже пользователь
+        existing_user = db.query(User).filter(User.telegram_id == telegram_id).first()
+        
+        if existing_user:
+            # Делаем существующего пользователя администратором
+            existing_user.is_admin = True
+            db.commit()
+            db.refresh(existing_user)
+            print(f"✅ Пользователь {telegram_id} назначен администратором")
+            return existing_user
+        
+        # Создаем нового пользователя-администратора
+        admin_user = User(
+            telegram_id=telegram_id,
+            username=username,
+            first_name=first_name,
+            is_admin=True,
+            is_active=True
+        )
+        
+        db.add(admin_user)
+        db.commit()
+        db.refresh(admin_user)
+        
+        print(f"✅ Создан новый администратор: {telegram_id} ({first_name})")
+        return admin_user
+        
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Ошибка создания администратора: {e}")
+        return None
+
+
+def is_user_admin(db: Session, telegram_id: int) -> bool:
+    """
+    Проверка является ли пользователь администратором.
+    
+    Args:
+        db: Сессия базы данных
+        telegram_id: Telegram ID пользователя
+    
+    Returns:
+        True если пользователь администратор, иначе False
+    """
+    try:
+        user = db.query(User).filter(
+            User.telegram_id == telegram_id,
+            User.is_admin == True,
+            User.is_active == True
+        ).first()
+        
+        return user is not None
+        
+    except Exception as e:
+        print(f"❌ Ошибка проверки прав администратора: {e}")
+        return False
+
+
+def get_admin_users(db: Session) -> List[User]:
+    """
+    Получить список всех администраторов.
+    
+    Args:
+        db: Сессия базы данных
+    
+    Returns:
+        Список пользователей-администраторов
+    """
+    try:
+        return db.query(User).filter(
+            User.is_admin == True,
+            User.is_active == True
+        ).all()
+        
+    except Exception as e:
+        print(f"❌ Ошибка получения списка администраторов: {e}")
+        return []
+
+
+def remove_admin_rights(db: Session, telegram_id: int) -> bool:
+    """
+    Снять права администратора с пользователя.
+    
+    Args:
+        db: Сессия базы данных
+        telegram_id: Telegram ID пользователя
+    
+    Returns:
+        True если права сняты успешно, иначе False
+    """
+    try:
+        user = db.query(User).filter(User.telegram_id == telegram_id).first()
+        
+        if not user:
+            print(f"❌ Пользователь {telegram_id} не найден")
+            return False
+        
+        if not user.is_admin:
+            print(f"❌ Пользователь {telegram_id} не является администратором")
+            return False
+        
+        user.is_admin = False
+        db.commit()
+        db.refresh(user)
+        
+        print(f"✅ Права администратора сняты с пользователя {telegram_id}")
+        return True
+        
+    except Exception as e:
+        db.rollback()
+        print(f"❌ Ошибка снятия прав администратора: {e}")
+        return False

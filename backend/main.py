@@ -14,10 +14,10 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from shared.database import init_database, check_database_connection, get_database_info
-from shared.utils import create_sample_data
+from shared import helper_functions as utils
 from shared.database import get_db
 from backend.config import settings, validate_environment, create_directories, get_cors_settings, get_api_settings
-from backend.api import auth, users, lessons, courses
+from backend.api import auth, users, lessons, courses, payments, promocodes, finance
 
 # Настройка логирования
 logging.basicConfig(
@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
         if settings.is_development:
             try:
                 db = next(get_db())
-                create_sample_data(db)
+                utils.create_sample_data(db)
                 db.close()
                 logger.info("✅ Тестовые данные созданы")
             except Exception as e:
@@ -252,6 +252,24 @@ app.include_router(
     courses.router,
     prefix=f"{settings.api_v1_prefix}/courses",
     tags=["Courses"]
+)
+
+app.include_router(
+    payments.router,
+    prefix=f"{settings.api_v1_prefix}/payments",
+    tags=["Payments"]
+)
+
+app.include_router(
+    promocodes.router,
+    prefix=f"{settings.api_v1_prefix}/promocodes",
+    tags=["Promocodes"]
+)
+
+app.include_router(
+    finance.router,
+    prefix=f"{settings.api_v1_prefix}/finance",
+    tags=["Finance"]
 )
 
 
